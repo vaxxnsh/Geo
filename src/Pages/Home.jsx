@@ -2,7 +2,7 @@ import { Alert, Dimensions, StyleSheet, Text, View } from 'react-native';
 import React, { useEffect, useRef, useState } from 'react';
 import MapView, { Marker } from 'react-native-maps';
 import * as Location from 'expo-location';
-import CustomMarker from '../Components/CustomMarker.js';
+import CustomMarker from '../Components/CustomMarker.jsx';
 import axios from 'axios';
 
 export default function Home() {
@@ -21,7 +21,7 @@ export default function Home() {
     if (!myLocation) return; // Ensure myLocation is available before running fetch
 
     try {
-      const data = await axios.get("http://192.168.29.151:8000/get");
+      const data = await axios.get("http://192.168.1.4:8000/get");
 
       // Compare only after myLocation is set
       console.log(myLocation.longitude - data.data.longi)

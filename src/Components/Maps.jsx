@@ -11,7 +11,7 @@ const handler = async () => {
 try {
   const coordsdata = {longi , lati}
   console.log(coordsdata)
-  const sendeddata = await axios.post("http://192.168.29.151:8000/post"  , coordsdata)
+  const sendeddata = await axios.post("http://192.168.1.4:8000/post"  , coordsdata)
   console.log(sendeddata)
 } catch (error) {
   console.log(error)
