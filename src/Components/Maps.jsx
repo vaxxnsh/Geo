@@ -11,7 +11,7 @@ const handler = async () => {
 try {
   const coordsdata = {longi , lati}
   console.log(coordsdata)
-  const sendeddata = await axios.post("http://192.168.1.4:8000/post"  , coordsdata)
+  const sendeddata = await axios.post("http://192.168.157.73:8000/post"  , coordsdata)
   console.log(sendeddata)
 } catch (error) {
   console.log(error)
@@ -20,8 +20,8 @@ try {
 
 
   const initialLocation = {
-    latitude: 37.78825,
-    longitude: -122.4324,
+    latitude: 29.89168,
+    longitude: 77.96022,
   };
   const [myLocation, setMyLocation] = useState(initialLocation);
   const [pin, setPin] = useState({ latitude: 37.78825, longitude: -122.4324 });
@@ -145,6 +145,28 @@ try {
 
   return (
     <View style={styles.container}>
+      <MapView
+        style={styles.map}
+        region={region}
+        onRegionChangeComplete={setRegion}
+        ref={mapRef}
+        provider="google"
+      >
+        {myLocation.latitude && myLocation.longitude && (
+          <>
+
+            <Marker
+              coordinate={myLocation}
+              title="My current location"
+              description="I am here"
+            />
+            <CustomMarker coordinate={myLocation} title="My current location" />
+          </>
+        )}
+        {pin.latitude && pin.longitude && (
+          <Marker coordinate={pin} title="Default location" description="I am here" />
+        )}
+      </MapView>
 
 
 
@@ -171,27 +193,7 @@ try {
 
 
 
-      <MapView
-        style={styles.map}
-        region={region}
-        onRegionChangeComplete={setRegion}
-        ref={mapRef}
-        provider="google"
-      >
-        {myLocation.latitude && myLocation.longitude && (
-          <>
-            <Marker
-              coordinate={myLocation}
-              title="My current location"
-              description="I am here"
-            />
-            <CustomMarker coordinate={myLocation} title="My current location" />
-          </>
-        )}
-        {pin.latitude && pin.longitude && (
-          <Marker coordinate={pin} title="Default location" description="I am here" />
-        )}
-      </MapView>
+      
 
       <View style={styles.locationContainer}>
         <Text style={styles.locationText}>

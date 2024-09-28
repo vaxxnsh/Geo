@@ -9,8 +9,8 @@ export default function Home() {
   const [myLocation, setMyLocation] = useState(null); // Initial state is null to ensure it's updated with actual location later
   const [pin, setPin] = useState({ latitude: 37.78825, longitude: -122.4324 });
   const [region, setRegion] = useState({
-    latitude: 37.78825,
-    longitude: -122.4324,
+    latitude: 29.89168,
+    longitude: 77.96022,
     latitudeDelta: 0.0922,
     longitudeDelta: 0.0421,
   });
@@ -21,7 +21,7 @@ export default function Home() {
     if (!myLocation) return; // Ensure myLocation is available before running fetch
 
     try {
-      const data = await axios.get("http://192.168.1.4:8000/get");
+      const data = await axios.get("http://192.168.157.73:8000/get");
 
       // Compare only after myLocation is set
       console.log(myLocation.longitude - data.data.longi)
@@ -30,8 +30,10 @@ export default function Home() {
        Math.abs( Math.floor( data.data.longi ) - Math.floor( myLocation.longitude)) <= 0.00001 && 
        Math.abs( Math.floor( data.data.lati ) - Math.floor( myLocation.latitude)) <= 0.00001
       ) {
+        Alert.alert("attendance marked");
         console.log("attendance marked");
 
+       
       } else {
         console.log("attendance not marked");
       }
@@ -142,7 +144,7 @@ const styles = StyleSheet.create({
   },
   map: {
     width: '100%',
-    height: Dimensions.get('window').height / 2, // Set height to half of the screen
+    height: Dimensions.get('window').height, // Set height to half of the screen
   },
   locationContainer: {
     position: 'absolute',

@@ -1,17 +1,60 @@
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import React, { useState } from 'react';
 import { View, TextInput, Text, TouchableOpacity, StyleSheet, Alert } from 'react-native';
-import { RootStackParamList } from '../App';
+import BouncyCheckbox from "react-native-bouncy-checkbox";
+import { z } from "zod";
+import axios from 'axios';
+import { jwtDecode } from 'jwt-decode';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+const loginSchema = z.object({
+  email : z.string().email(),
+  password : z.string().min(6).max(16),
+})
 
 const LoginScreen = ({navigation}) => {
-  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [isAdmin,setIsAdmin] = useState(false);
 
-  const handleLogin = () => {
-    if (username && password) {
-      Alert.alert('Login Successful', `Welcome, ${username}!`);
-    } else {
-      Alert.alert('Error', 'Please fill in both fields.');
+
+  const storeData = async (value) => {
+    try {
+      await AsyncStorage.setItem('user', value);
+    } catch (e) {
+      Alert.alert("Error while logging In")
+    }
+  };
+
+  const handleLogin = async () => {
+    let loginForm = {email,password}
+    let fetchUrl = isAdmin? "" : ""
+
+    const validate = loginSchema.safeParse(loginForm)
+
+    if(!validate.success) {
+      Alert.alert("Invalid email or password")
+      return
+    }
+    
+    try {
+      const response = await axios.post(
+        `${"http://192.168.1.4:3000"}${isAdmin ? "/admin" : "/user"}/signin`,
+        loginForm
+      )
+      .catch((err) => console.log(err))
+
+      if(response.data?.token) {
+        const user = jwtDecode(response.data.token) 
+        storeData(JSON.stringify(user))
+        console.log(user)
+        navigation.navigate('Landing')
+      }
+      else {
+        Alert.alert(`${isAdmin ? "Admin" : "Employee"} not found`)
+      }
+    }
+    catch(err){
+      console.log(err)
     }
   };
 
@@ -23,8 +66,8 @@ const LoginScreen = ({navigation}) => {
         style={styles.input}
         placeholder="Username or Email"
         placeholderTextColor="#aaa"
-        value={username}
-        onChangeText={setUsername}
+        value={email}
+        onChangeText={setEmail}
       />
 
       <TextInput
@@ -35,6 +78,18 @@ const LoginScreen = ({navigation}) => {
         onChangeText={setPassword}
         secureTextEntry={true}
       />
+
+      <View className='flex flex-row py-4'>
+        <BouncyCheckbox 
+          isChecked={isAdmin}
+          useBuiltInState={false}
+          fillColor='#6200EE'
+          onPress={() => {
+          setIsAdmin(!isAdmin)
+        }}
+        />
+        <Text className='text-lg text-black'>Are you Admin ?</Text>
+      </View>
 
       <TouchableOpacity style={styles.button} onPress={handleLogin}>
         <Text style={styles.buttonText}>Login</Text>

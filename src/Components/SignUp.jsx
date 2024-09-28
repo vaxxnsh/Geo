@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { View, TextInput, Text, TouchableOpacity, StyleSheet, Alert,} from 'react-native';
-import axios, { all } from 'axios';
+import axios from 'axios';
 import BouncyCheckbox from "react-native-bouncy-checkbox";
 import { z } from "zod";
+import { jwtDecode } from 'jwt-decode';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
 const adminSchema = z.object({
@@ -24,6 +26,16 @@ const SignupScreen = ({navigation} ) => {
   const [isAdmin,setIsAdmin] = useState(false);
   
   const handleSignup = async () => {
+
+    const storeData = async (value) => {
+      try {
+        await AsyncStorage.setItem('user', value);
+      } catch (e) {
+        console.log(e)
+        Alert.alert("Error while logging In")
+      }
+    };
+
     const formValues= {
       name: fullname,
       email: email,
@@ -35,47 +47,36 @@ const SignupScreen = ({navigation} ) => {
     const val = isAdmin ? adminSchema.safeParse(formValues) : empSchema.safeParse(formValues)
 
     if(!val.success) {
-      Alert.alert(JSON.stringify(val.error))
+      Alert.alert("Invalid Inputs")
       console.log(JSON.stringify(val.error))
       return;
     }
     
     try {
-      const signupData = {
-        name: fullname,
-        email: email,
-        company: company,
-        phone: phone,
-        password: password,
-      };
       const response = await axios.post(
-        `${process.env.BASE_URL} ${isAdmin ? "/admin" : "/user"}/signup`,
-        signupData
-      );
-    
-      console.log(response.data.message);
-    } catch (err) {
-      // Ensure err is of type AxiosError
-      const error = err;
-    
-      if (error.response) {
-        // Server responded with a status code that falls out of the range of 2xx
-        console.log('Error Response:', error.response.data);
-        console.log('Status:', error.response.status);
-      } else if (error.request) {
-        // The request was made but no response was received
-        console.log('No response received:', error.request);
-      } else {
-        // Something happened in setting up the request
-        console.log('Error:', error.message);
+        `${"http://192.168.1.4:3000"}${isAdmin ? "/admin" : "/user"}/signup`,
+        formValues
+      )
+      .catch((err) => console.log(err))
+
+      if(response.data?.token) {
+        const user = jwtDecode(response.data.token) 
+        storeData(JSON.stringify(user))
+        console.log(user)
+        navigation.navigate('Landing')
       }
-      console.log('Error while signing up');
+      else {
+        Alert.alert(`${isAdmin ? "Admin" : "Employee"} not found`)
+      }
+    }
+    catch(err){
+      console.log(err)
     }
   };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Sign Up</Text>
+      <Text style={styles.title}>Register {process.env.BASE_URL}</Text>
 
       <TextInput
         style={styles.input}
