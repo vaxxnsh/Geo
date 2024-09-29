@@ -3,11 +3,18 @@ import Attendance from './Attendance'
 import Icon from 'react-native-vector-icons/Ionicons';
 import Home from '../Pages/Home'
 import TabHomeNew from './TabHomeNew'
-
+import { useRecoilValue } from 'recoil';
+import { userState } from '../Store/user';
 
 const TabStack = createBottomTabNavigator()
 
-export default function Landing() {
+export default function Landing({ navigation }) {
+
+  const user = useRecoilValue(userState);
+
+  if(!user)  navigation.navigate('Auth')
+
+
   return (
               <TabStack.Navigator screenOptions={({ route }) => ({
                 tabBarIcon: ({ focused, color, size }) => {

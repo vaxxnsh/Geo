@@ -1,51 +1,57 @@
-import { Alert, Button, Dimensions, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Alert, Button, Dimensions, StyleSheet, Text, TextInput, View, TouchableOpacity } from 'react-native';
 import React, { useEffect, useRef, useState } from 'react';
 import MapView, { Marker } from 'react-native-maps';
 import * as Location from 'expo-location';
-import CustomMarker from './CustomMarker';
 import axios from 'axios';
+
 export default function Map() {
-
-  
-const handler = async () => {
-try {
-  const coordsdata = {longi , lati}
-  console.log(coordsdata)
-  const sendeddata = await axios.post("http://192.168.157.73:8000/post"  , coordsdata)
-  console.log(sendeddata)
-} catch (error) {
-  console.log(error)
-}
-}
-
-
-  const initialLocation = {
-    latitude: 29.89168,
-    longitude: 77.96022,
-  };
-  const [myLocation, setMyLocation] = useState(initialLocation);
-  const [pin, setPin] = useState({ latitude: 37.78825, longitude: -122.4324 });
-  const [region, setRegion] = useState({
-    latitude: initialLocation.latitude,
-    longitude: initialLocation.longitude,
-    latitudeDelta: 0.0922,
-    longitudeDelta: 0.0421,
-  });
-  const [ longi  , setlongi] = useState("")
-  const [ lati , setlati] = useState("") // State to hold input text
+  const [myLocation, setMyLocation] = useState({ latitude: 37.78825, longitude: -122.4324 });
+  const [longi, setlongi] = useState("");
+  const [lati, setlati] = useState("");
   const mapRef = useRef(null);
 
-  // Geofence
-  const geofence = {
-    latitude: lati,
-    longitude: longi,
-    radius: 100,
+  const handler = async () => {
+    try {
+      const coordsdata = { longi, lati };
+      console.log(coordsdata);
+      const sendeddata = await axios.post("http://192.168.1.4:8000/post", coordsdata);
+      console.log(sendeddata);
+    } catch (error) {
+      console.log(error);
+    }
   };
- // console.log(lati)
+
+  const currentHandler = async () => {
+    try {
+      const currentLocationData = {
+        longi: myLocation.longitude,
+        lati: myLocation.latitude,
+      };
+      console.log(currentLocationData);
+      const response = await axios.post("http://192.168.1.4:8000/post", currentLocationData);
+      console.log('Current location sent:', response.data);
+    } catch (error) {
+      console.log('Error sending current location:', error);
+    }
+  };
+
+  const _getLocation = async () => {
+    try {
+      let { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== 'granted') {
+        console.warn('Location Permission Denied');
+        return;
+      }
+
+      let location = await Location.getCurrentPositionAsync({});
+      setMyLocation(location.coords);
+    } catch (err) {
+      console.warn('Error getting location:', err);
+    }
+  };
 
   useEffect(() => {
     _getLocation();
-
     let subscription;
     (async () => {
       try {
@@ -58,16 +64,6 @@ try {
           (location) => {
             const { latitude, longitude } = location.coords;
             setMyLocation({ latitude, longitude });
-            setRegion({
-              latitude,
-              longitude,
-              latitudeDelta: 0.0922,
-              longitudeDelta: 0.0421,
-            });
-
-            // Geofence logic
-            checkGeofence(latitude, longitude);
-
             if (mapRef.current) {
               mapRef.current.animateToRegion(
                 {
@@ -93,107 +89,51 @@ try {
     };
   }, []);
 
-  const _getLocation = async () => {
-    try {
-      let { status } = await Location.requestForegroundPermissionsAsync();
-
-      // If permission is denied, alert the user
-      if (status !== 'granted') {
-        console.warn('Location Permission Denied');
-        return;
-      }
-
-      let location = await Location.getCurrentPositionAsync({});
-      setMyLocation(location.coords);
-    } catch (err) {
-      // Handle error or rejection of location services
-      console.warn('Error getting location:', err);
-    }
-  };
-
-  // Geofence logic
-  const checkGeofence = (latitude, longitude) => {
-    const distance = calculateDistance(
-      latitude,
-      longitude,
-      geofence.latitude,
-      geofence.longitude
-    );
-
-    if (distance <= geofence.radius) {
-     // console.log('Inside the geofence!');
-     // Alert.alert('Inside Geofenced Area', `You are Inside the geofenced area.`);
-    } else {
-     // console.log('Outside the geofence!');
-     // Alert.alert('Exited Geofenced Area', `You are outside the geofenced area.`);
-    }
-  };
-
-  const calculateDistance = (lat1, lon1, lat2, lon2) => {
-    const toRad = (value) => (value * Math.PI) / 180;
-    const R = 6371e3; // Earth's radius in meters
-    const dLat = toRad(lat2 - lat1);
-    const dLon = toRad(lon2 - lon1);
-    const a =
-      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-      Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
-      Math.sin(dLon / 2) * Math.sin(dLon / 2);
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-    const distance = R * c;
-    return distance; // Distance in meters
-  };
-
   return (
     <View style={styles.container}>
-      <MapView
-        style={styles.map}
-        region={region}
-        onRegionChangeComplete={setRegion}
-        ref={mapRef}
-        provider="google"
-      >
-        {myLocation.latitude && myLocation.longitude && (
-          <>
-
-            <Marker
-              coordinate={myLocation}
-              title="My current location"
-              description="I am here"
-            />
-            <CustomMarker coordinate={myLocation} title="My current location" />
-          </>
-        )}
-        {pin.latitude && pin.longitude && (
-          <Marker coordinate={pin} title="Default location" description="I am here" />
-        )}
-      </MapView>
-
-
-
-      {/* Input Box */}
       <View style={styles.inputContainer}>
-        <TextInput 
+        <TextInput
           style={styles.inputBox}
           placeholder="Set longitude"
           value={longi}
           onChangeText={setlongi}
-
-       />
-        <TextInput 
+          placeholderTextColor="#ccc"
+        />
+        <TextInput
           style={styles.inputBox}
-          placeholder="Set lattitude"
+          placeholder="Set latitude"
           value={lati}
           onChangeText={setlati}
+          placeholderTextColor="#ccc"
+        />
 
-       />
-       <Button title="Send longitude and lattitude" onPress={handler} ></Button>
-       
+        <TouchableOpacity style={styles.button} onPress={handler}>
+          <Text style={styles.buttonText}>Send longitude and latitude</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity style={styles.button} onPress={currentHandler}>
+          <Text style={styles.buttonText}>Send your current location</Text>
+        </TouchableOpacity>
       </View>
 
-
-
-
-      
+      <MapView
+        style={styles.map}
+        region={{
+          latitude: myLocation.latitude,
+          longitude: myLocation.longitude,
+          latitudeDelta: 0.0922,
+          longitudeDelta: 0.0421,
+        }}
+        ref={mapRef}
+      >
+        {myLocation.latitude && myLocation.longitude && (
+          <Marker
+            coordinate={myLocation}
+            title="My current location"
+            description="I am here"
+          />
+        )}
+      </MapView>
 
       <View style={styles.locationContainer}>
         <Text style={styles.locationText}>
@@ -207,29 +147,51 @@ try {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'flex-end', // Aligns the map to the bottom
-    backgroundColor: '#fff',
+    justifyContent: 'flex-end',
+    backgroundColor: '#f0f4f7', // Light background color
   },
   inputContainer: {
     position: 'absolute',
     top: 50,
-    left: 0,
-    right: 0,
-    zIndex: 1, // Ensure input is above the map
-    alignItems: 'center',
+    left: 20,
+    right: 20,
+    zIndex: 1,
+    backgroundColor: 'rgba(255, 255, 255, 0.9)',
+    padding: 20,
+    borderRadius: 10,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 5,
+    elevation: 5,
   },
   inputBox: {
-    width: '80%',
-    height: 40,
-    borderColor: 'gray',
+    width: '100%',
+    height: 50,
+    borderColor: '#007AFF',
     borderWidth: 1,
-    borderRadius: 10,
+    borderRadius: 25,
     backgroundColor: '#fff',
-    paddingHorizontal: 10,
+    paddingHorizontal: 20,
+    marginBottom: 15,
+    color: '#000',
+  },
+  button: {
+    backgroundColor: '#007AFF',
+    paddingVertical: 15,
+    borderRadius: 25,
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+  buttonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: 'bold',
   },
   map: {
     width: '100%',
-    height: Dimensions.get('window').height / 2, // Set height to half of the screen
+    height: Dimensions.get('window').height / 2,
+    borderRadius: 20,
   },
   locationContainer: {
     position: 'absolute',
@@ -244,5 +206,5 @@ const styles = StyleSheet.create({
   locationText: {
     fontSize: 16,
     color: '#000',
-  },
+  },
 });

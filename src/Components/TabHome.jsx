@@ -1,8 +1,40 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { CommonActions } from '@react-navigation/native';
 import React from 'react';
-import { StyleSheet, Text, View, Image, TouchableOpacity, ScrollView, SafeAreaView, Dimensions } from 'react-native';
-import Icon from 'react-native-vector-icons/Ionicons';
+import { StyleSheet, Text, View, Image, TouchableOpacity, ScrollView, SafeAreaView, Dimensions, Alert } from 'react-native';
+import { useRecoilValue } from 'recoil';
+import { userState } from '../Store/user';
 
 const LandingPage = ({ navigation }) => {
+
+  const user = useRecoilValue(userState);
+
+  console.log(user,"In landing Page")
+
+  const goToInitialScreen = () => {
+    navigation.dispatch(
+      CommonActions.reset({
+        index: 0,
+        routes: [{ name: 'Auth' }],
+      })
+    );
+  };
+
+  const handleLogout = async () => {
+    try {
+      await AsyncStorage.removeItem('user');
+      
+      Alert.alert('Logged out', 'You have been successfully logged out!');
+      const user = await AsyncStorage.getItem('user')
+      console.log(user,'After Loggin out')
+ 
+      goToInitialScreen();
+    } 
+    catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       
@@ -32,9 +64,9 @@ const LandingPage = ({ navigation }) => {
 
       <TouchableOpacity 
         style={styles.button} 
-        onPress={() => navigation.navigate('Admin')}
+        onPress={() => handleLogout()}
       >
-        <Text style={styles.buttonText}>Admin Map</Text>
+        <Text style={styles.buttonText}>Logout</Text>
       </TouchableOpacity>
 
       <TouchableOpacity 

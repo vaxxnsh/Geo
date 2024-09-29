@@ -5,6 +5,8 @@ import { z } from "zod";
 import axios from 'axios';
 import { jwtDecode } from 'jwt-decode';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useRecoilState } from 'recoil';
+import { userState } from '../Store/user.js';
 
 const loginSchema = z.object({
   email : z.string().email(),
@@ -12,6 +14,7 @@ const loginSchema = z.object({
 })
 
 const LoginScreen = ({navigation}) => {
+  const [user,setUser] = useRecoilState(userState);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isAdmin,setIsAdmin] = useState(false);
@@ -45,8 +48,9 @@ const LoginScreen = ({navigation}) => {
 
       if(response.data?.token) {
         const user = jwtDecode(response.data.token) 
-        storeData(JSON.stringify(user))
+        await storeData(JSON.stringify(user))
         console.log(user)
+        setUser(user);
         navigation.navigate('Landing')
       }
       else {

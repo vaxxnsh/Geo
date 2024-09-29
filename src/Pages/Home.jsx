@@ -21,11 +21,11 @@ export default function Home() {
     if (!myLocation) return; // Ensure myLocation is available before running fetch
 
     try {
-      const data = await axios.get("http://192.168.157.73:8000/get");
+      const data = await axios.get("http://192.168.1.4:8000/get");
 
       // Compare only after myLocation is set
       console.log(myLocation.longitude - data.data.longi)
-      console.log(myLocation.latitude - data.data.latii)
+      console.log(myLocation.latitude - data.data.lati)
       if (
        Math.abs( Math.floor( data.data.longi ) - Math.floor( myLocation.longitude)) <= 0.00001 && 
        Math.abs( Math.floor( data.data.lati ) - Math.floor( myLocation.latitude)) <= 0.00001

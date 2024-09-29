@@ -5,7 +5,8 @@ import BouncyCheckbox from "react-native-bouncy-checkbox";
 import { z } from "zod";
 import { jwtDecode } from 'jwt-decode';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
+import { useRecoilState } from 'recoil';
+import { userState } from '../Store/user.js';
 
 const adminSchema = z.object({
   name : z.string().min(2),
@@ -18,6 +19,9 @@ const adminSchema = z.object({
 const empSchema = adminSchema.omit({company : true})
 
 const SignupScreen = ({navigation} ) => {
+
+  const [user,setUser] = useRecoilState(userState);
+
   const [fullname, setFullName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -62,6 +66,7 @@ const SignupScreen = ({navigation} ) => {
       if(response.data?.token) {
         const user = jwtDecode(response.data.token) 
         storeData(JSON.stringify(user))
+        setUser(user)
         console.log(user)
         navigation.navigate('Landing')
       }
