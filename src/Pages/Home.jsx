@@ -4,9 +4,28 @@ import MapView, { Marker } from 'react-native-maps';
 import * as Location from 'expo-location';
 import CustomMarker from '../Components/CustomMarker.jsx';
 import axios from 'axios';
+import { useRecoilState } from 'recoil';
+import { userState } from '../Store/user';
+import Map from '../Components/Maps.jsx';
+import SecondInAdmin from '../Components/SecondInAdmin.jsx';
+
 
 export default function Home() {
-  const [myLocation, setMyLocation] = useState(null); // Initial state is null to ensure it's updated with actual location later
+
+  const [user, setUser] = useRecoilState(userState);
+  console.log("In User Map", user.employee)
+
+  if(user.admin) {
+    return <SecondInAdmin />
+  }
+
+  console.log(user);
+
+  async function updateAttendance() {
+      axios.post()
+  }
+
+  const [myLocation, setMyLocation] = useState(null);
   const [pin, setPin] = useState({ latitude: 37.78825, longitude: -122.4324 });
   const [region, setRegion] = useState({
     latitude: 29.89168,
@@ -17,61 +36,66 @@ export default function Home() {
 
   const mapRef = useRef(null);
 
+  // Define the geofencing radius in meters (e.g., 50 meters)
+  const GEOFENCE_RADIUS = 200;
+
   const fetchdata = async () => {
-    if (!myLocation) return; // Ensure myLocation is available before running fetch
+    if (!myLocation) return;
+
+
 
     try {
-      const data = await axios.get("http://192.168.1.4:8000/get");
+     // const data = await axios.get("http://192.168.1.4:8000/get");
 
-      // Compare only after myLocation is set
-      console.log(myLocation.longitude - data.data.longi)
-      console.log(myLocation.latitude - data.data.lati)
-      if (
-       Math.abs( Math.floor( data.data.longi ) - Math.floor( myLocation.longitude)) <= 0.00001 && 
-       Math.abs( Math.floor( data.data.lati ) - Math.floor( myLocation.latitude)) <= 0.00001
-      ) {
-        Alert.alert("attendance marked");
-        console.log("attendance marked");
+    //  const targetLatitude = data.data.lati;
+     // const targetLongitude = data.data.longi;
+     const targetLatitude = "30.34301"
+     const targetLongitude = "77.88683"
+      const distance = calculateDistance(
+        myLocation.latitude,
+        myLocation.longitude,
+        targetLatitude,
+        targetLongitude
+      );
 
-       
+      console.log('Distance to target:', distance, 'meters');
+
+      // Check if the user is within the geofence radius
+      if (distance <= GEOFENCE_RADIUS) {
+        Alert.alert("Attendance marked!");
+        console.log("Attendance marked");
       } else {
-        console.log("attendance not marked");
+        console.log("Outside geofence. Attendance not marked");
+        Alert.alert("Outside geofence. Attendance not marked");
       }
-
-      console.log( data.data.lati, myLocation.longitude,data.data.longi,myLocation.latitude)
-      console.log(myLocation.longitude - data.data.longi)
-      console.log(myLocation.latitude - data.data.lati)
+      
     } catch (error) {
       console.log(error);
     }
   };
 
-  // Use effect to get the location when the component mounts
   useEffect(() => {
     _getLocation();
   }, []);
 
-  // Use effect to fetch data once the location has been updated
   useEffect(() => {
     if (myLocation) {
       fetchdata();
     }
-  }, [myLocation]); // This runs whenever myLocation changes
+  }, [myLocation]);
 
   const _getLocation = async () => {
     try {
       let { status } = await Location.requestForegroundPermissionsAsync();
 
-      // If permission is denied, alert the user
       if (status !== 'granted') {
         console.warn('Location Permission Denied');
         return;
       }
 
       let location = await Location.getCurrentPositionAsync({});
-      setMyLocation(location.coords); // Set the current location after obtaining it
+      setMyLocation(location.coords);
 
-      // Set the region based on the location obtained
       setRegion({
         latitude: location.coords.latitude,
         longitude: location.coords.longitude,
@@ -87,7 +111,7 @@ export default function Home() {
     const toRad = (value) => (value * Math.PI) / 180;
     const R = 6371e3; // Earth's radius in meters
     const dLat = toRad(lat2 - lat1);
-    const dLon = toRad(lon2 - lon1);
+    const dLon = toRad(lon1 - lon2); // Longitude difference
     const a =
       Math.sin(dLat / 2) * Math.sin(dLat / 2) +
       Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
@@ -139,12 +163,12 @@ export default function Home() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'flex-end', // Aligns the map to the bottom
+    justifyContent: 'flex-end',
     backgroundColor: '#fff',
   },
   map: {
     width: '100%',
-    height: Dimensions.get('window').height, // Set height to half of the screen
+    height: Dimensions.get('window').height,
   },
   locationContainer: {
     position: 'absolute',

@@ -3,35 +3,44 @@ import React, { useEffect, useRef, useState } from 'react';
 import MapView, { Marker } from 'react-native-maps';
 import * as Location from 'expo-location';
 import axios from 'axios';
+import { BASE_URL } from '../constants';
+import { useRecoilState } from 'recoil';
+import { userState } from '../Store/user';
 
 export default function Map() {
+
+  const [user, setUser] = useRecoilState(userState);
+  
   const [myLocation, setMyLocation] = useState({ latitude: 37.78825, longitude: -122.4324 });
+  const [office,setOffice] = useState('');
   const [longi, setlongi] = useState("");
   const [lati, setlati] = useState("");
   const mapRef = useRef(null);
 
   const handler = async () => {
     try {
-      const coordsdata = { longi, lati };
-      console.log(coordsdata);
-      const sendeddata = await axios.post("http://192.168.1.4:8000/post", coordsdata);
-      console.log(sendeddata);
+      const coordsdata = { 
+          adminId : user.admin._id,
+          name : office,
+          longitude : longi,
+          latitude : lati
+       };
+       console.log(coordsdata);
+       console.log(`${BASE_URL}admin/addOffice`)
+      const sendeddata = await axios.post(`${BASE_URL}admin/addOffice`, coordsdata);
+      console.log(sendeddata.data.message);
     } catch (error) {
       console.log(error);
     }
   };
 
-  const currentHandler = async () => {
-    try {
-      const currentLocationData = {
-        longi: myLocation.longitude,
-        lati: myLocation.latitude,
-      };
-      console.log(currentLocationData);
-      const response = await axios.post("http://192.168.1.4:8000/post", currentLocationData);
-      console.log('Current location sent:', response.data);
-    } catch (error) {
-      console.log('Error sending current location:', error);
+  const currentHandler = () => {
+     // Add this to see what's being set
+    if (myLocation.latitude && myLocation.longitude) {
+      setlongi(String(myLocation.longitude)); // Ensure it's a string for the TextInput
+      setlati(String(myLocation.latitude));  // Ensure it's a string for the TextInput
+    } else {
+      console.warn("Location data not available");
     }
   };
 
@@ -92,6 +101,15 @@ export default function Map() {
   return (
     <View style={styles.container}>
       <View style={styles.inputContainer}>
+
+        <TextInput
+          style={styles.inputBox}
+          placeholder="Office name"
+          value={office}
+          onChangeText={setOffice}
+          placeholderTextColor="#ccc"
+        />
+
         <TextInput
           style={styles.inputBox}
           placeholder="Set longitude"
@@ -107,11 +125,11 @@ export default function Map() {
           placeholderTextColor="#ccc"
         />
 
-        <TouchableOpacity style={styles.button} onPress={handler}>
+        <TouchableOpacity style={styles.button} onPress={() => handler()}>
           <Text style={styles.buttonText}>Send longitude and latitude</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.button} onPress={currentHandler}>
+        <TouchableOpacity style={styles.button} onPress={() => currentHandler()}>
           <Text style={styles.buttonText}>Send your current location</Text>
         </TouchableOpacity>
       </View>

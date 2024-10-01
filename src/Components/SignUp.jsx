@@ -7,6 +7,7 @@ import { jwtDecode } from 'jwt-decode';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useRecoilState } from 'recoil';
 import { userState } from '../Store/user.js';
+import { BASE_URL } from '../constants.js';
 
 const adminSchema = z.object({
   name : z.string().min(2),
@@ -58,11 +59,11 @@ const SignupScreen = ({navigation} ) => {
     
     try {
       const response = await axios.post(
-        `${"http://192.168.1.4:3000"}${isAdmin ? "/admin" : "/user"}/signup`,
+        `${BASE_URL}${isAdmin ? "admin" : "user"}/signup`,
         formValues
       )
       .catch((err) => console.log(err))
-
+      console.log(response.data)
       if(response.data?.token) {
         const user = jwtDecode(response.data.token) 
         storeData(JSON.stringify(user))

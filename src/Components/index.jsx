@@ -12,7 +12,7 @@ const Stack = createStackNavigator();
 
 const Index = () => {
   const [user, setUser] = useRecoilState(userState);
-  const [loading, setLoading] = useState(true);  // Add loading state
+  const [loading, setLoading] = useState(true); // Add loading state
 
   const getData = async (key) => {
     try {
@@ -26,32 +26,29 @@ const Index = () => {
 
   const setData = async () => {
     const data = await getData('user');
-    console.log(data)
     if (data) {
-      setUser(JSON.parse(data));
-      console.log(user)
+      setUser(JSON.parse(data)); // Set user in Recoil state if data exists
+    } else {
+      setUser(null); // Set user to null if no data is found
     }
-    console.log(user)
-    setLoading(false);  // Set loading to false after the async operation
+    setLoading(false); // Set loading to false after the async operation
   };
 
   useEffect(() => {
-    setData();
+    setData(); // Fetch user data when component mounts
   }, []);
 
   if (loading) {
-    return <LoadingSpinner />; // Optionally, you can render a loading spinner here
+    return <LoadingSpinner />; // Render a loading spinner while fetching data
   }
 
   return (
     
-      
-        <Stack.Navigator initialRouteName={user ? "Landing" : "Auth"}>
-          <Stack.Screen name="Auth" component={Main} options={{ headerShown: false }} />
-          <Stack.Screen name="Landing" component={Landing} options={{ headerShown: false }} />
-        </Stack.Navigator>
-     
-
+      <Stack.Navigator initialRouteName={user ? "Landing" : "Auth"}>
+        <Stack.Screen name="Auth" component={Main} options={{ headerShown: false }} />
+        <Stack.Screen name="Landing" component={Landing} options={{ headerShown: false }} />
+      </Stack.Navigator>
+  
   );
 };
 

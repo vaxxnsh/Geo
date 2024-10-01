@@ -8,7 +8,7 @@ const HomeScreen = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Welcome to GeoAt {process.env.BASE_URL}</Text>
+      <Text style={styles.title}>AttendEase{process.env.BASE_URL}</Text>
       <Text style={styles.subtitle}>Location-Verified Attendance, Simplified.</Text>
 
       <TouchableOpacity
@@ -36,11 +36,10 @@ const styles = StyleSheet.create({
     padding: 20,
     backgroundColor: '#f7f7f7',
   },
-  title: {
-    fontSize: 36,
+  title: { 
+    fontSize: 36, 
     fontWeight: 'bold',
-    color: '#333',
-    marginBottom: 20,
+    color: '#000', 
   },
   subtitle: {
     fontSize: 18,

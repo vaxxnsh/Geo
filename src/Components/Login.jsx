@@ -7,6 +7,7 @@ import { jwtDecode } from 'jwt-decode';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useRecoilState } from 'recoil';
 import { userState } from '../Store/user.js';
+import { BASE_URL } from '../constants.js';
 
 const loginSchema = z.object({
   email : z.string().email(),
@@ -38,10 +39,14 @@ const LoginScreen = ({navigation}) => {
       Alert.alert("Invalid email or password")
       return
     }
+
+    console.log(`${BASE_URL}${isAdmin ? "admin" : "user"}/signin`)
+
+    console.log(loginForm)
     
     try {
       const response = await axios.post(
-        `${"http://192.168.1.4:3000"}${isAdmin ? "/admin" : "/user"}/signin`,
+        `${BASE_URL}${isAdmin ? "admin" : "user"}/signin`,
         loginForm
       )
       .catch((err) => console.log(err))

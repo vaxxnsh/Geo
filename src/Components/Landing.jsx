@@ -5,6 +5,7 @@ import Home from '../Pages/Home'
 import TabHomeNew from './TabHomeNew'
 import { useRecoilValue } from 'recoil';
 import { userState } from '../Store/user';
+import EmployeeInfo from './AttendanceForEmp';
 
 const TabStack = createBottomTabNavigator()
 
@@ -37,7 +38,7 @@ export default function Landing({ navigation }) {
             >
             <TabStack.Screen name='Home' component={TabHomeNew} options={{ headerShown: false }}/>
             <TabStack.Screen name='Live' component={Home} options={{ headerShown: false }}/>
-            <TabStack.Screen name='Attendance' component={Attendance} options={{ headerShown: false }} />
+            <TabStack.Screen name='Attendance' component={EmployeeInfo} options={{ headerShown: false }} />
         </TabStack.Navigator>
 
   )
