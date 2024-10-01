@@ -8,21 +8,26 @@ import { useRecoilState } from 'recoil';
 import { userState } from '../Store/user';
 import Map from '../Components/Maps.jsx';
 import SecondInAdmin from '../Components/SecondInAdmin.jsx';
+import { BASE_URL } from '../constants.js';
 
 
 export default function Home() {
 
   const [user, setUser] = useRecoilState(userState);
-  console.log("In User Map", user.employee)
-
+  
   if(user.admin) {
     return <SecondInAdmin />
   }
 
-  console.log(user);
-
   async function updateAttendance() {
-      axios.post()
+      await axios.post(`${BASE_URL}user/markAttendance`,{
+        employeeID : user.employee._id,
+        checkin_time : "2024-10-01",
+        checkout_time : "",
+        latitude : "30.34291",
+        longitude : "77.88657",
+        total_hours : ""
+      })
   }
 
   const [myLocation, setMyLocation] = useState(null);
@@ -62,6 +67,7 @@ export default function Home() {
 
       // Check if the user is within the geofence radius
       if (distance <= GEOFENCE_RADIUS) {
+        await updateAttendance();
         Alert.alert("Attendance marked!");
         console.log("Attendance marked");
       } else {

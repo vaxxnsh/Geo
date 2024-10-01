@@ -63,6 +63,7 @@ const SignupScreen = ({navigation} ) => {
         formValues
       )
       .catch((err) => console.log(err))
+      
       console.log(response.data)
       if(response.data?.token) {
         const user = jwtDecode(response.data.token) 
