@@ -36,10 +36,8 @@ const EmployeeInfo = () => {
   // Render item function for FlatList
   const renderItem = ({ item }) => (
     <View style={styles.card}>
-      <Text style={styles.title}>Employee ID: {item.employeeId}</Text>
+      <Text style={styles.title}>Student ID: {item.employeeID}</Text>
       <Text style={styles.text}>Check-in Time: {item.checkin_time}</Text>
-      <Text style={styles.text}>{item.checkout_time ? `Check-out Time: ${item.checkout_time}` : "Not Known"}</Text>
-      <Text style={styles.text}>{item.checkout_time ? `Total Hours: ${item.total_hours}` : "Not Known"}</Text>
     </View>
   );
 

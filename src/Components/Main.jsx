@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { createStackNavigator } from '@react-navigation/stack';
 import LoginScreen from './Login';
 import SignupScreen from './SignUp';
@@ -10,7 +10,7 @@ import { userState } from '../Store/user';
 const Stack = createStackNavigator();
 
 export default function Main() {
-
+  
   const user = useRecoilState(userState);
 
 
@@ -19,7 +19,7 @@ export default function Main() {
         <Stack.Screen name='Initial' component={HomeScreen} options={{headerShown : false}} />
         <Stack.Screen name="Login" component={LoginScreen} options={{headerShown : false}}/>
         <Stack.Screen name="Register" component={SignupScreen} options={{headerShown : false}}/>
-        {user.employee && <Stack.Screen name="Landing"  component={Landing} options={{headerShown : false}} />}
+        {<Stack.Screen name="Landing"  component={Landing} options={{headerShown : false}} />}
     </Stack.Navigator>
   )
 }

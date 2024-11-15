@@ -15,14 +15,16 @@ export default function Home() {
 
   const [user, setUser] = useRecoilState(userState);
   
+  
   if(user.admin) {
     return <SecondInAdmin />
   }
 
   async function updateAttendance() {
+    const dateString = new Date(Date.now()).toString();
       await axios.post(`${BASE_URL}user/markAttendance`,{
         employeeID : user.employee._id,
-        checkin_time : "2024-10-01",
+        checkin_time : dateString,
         checkout_time : "",
         latitude : "30.34291",
         longitude : "77.88657",
@@ -40,7 +42,7 @@ export default function Home() {
   });
 
   const mapRef = useRef(null);
-
+  
   // Define the geofencing radius in meters (e.g., 50 meters)
   const GEOFENCE_RADIUS = 200;
 
@@ -54,8 +56,8 @@ export default function Home() {
 
     //  const targetLatitude = data.data.lati;
      // const targetLongitude = data.data.longi;
-     const targetLatitude = "30.34301"
-     const targetLongitude = "77.88683"
+     const targetLatitude = "30.33698"
+     const targetLongitude = "77.86936"
       const distance = calculateDistance(
         myLocation.latitude,
         myLocation.longitude,
@@ -132,6 +134,7 @@ export default function Home() {
       <MapView
         style={styles.map}
         region={region}
+        zoomControlEnabled={true}
         onRegionChangeComplete={setRegion}
         ref={mapRef}
         provider="google"

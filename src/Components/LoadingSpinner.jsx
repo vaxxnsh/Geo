@@ -24,6 +24,7 @@ const LoadingSpinner = () => {
 
   return (
     <View style={styles.container}>
+      
       <Animated.View style={[styles.spinner, { transform: [{ rotate: spin }] }]}>
         {/* You can use this View to create a custom spinner shape */}
       </Animated.View>

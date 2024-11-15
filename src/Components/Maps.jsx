@@ -224,5 +224,5 @@ const styles = StyleSheet.create({
   locationText: {
     fontSize: 16,
     color: '#000',
-  },
+  },
 });

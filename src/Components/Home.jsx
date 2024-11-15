@@ -8,7 +8,7 @@ const HomeScreen = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>AttendEase{process.env.BASE_URL}</Text>
+      <Text style={styles.title}>DormEase{process.env.BASE_URL}</Text>
       <Text style={styles.subtitle}>Location-Verified Attendance, Simplified.</Text>
 
       <TouchableOpacity

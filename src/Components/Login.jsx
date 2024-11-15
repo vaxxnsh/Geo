@@ -59,7 +59,7 @@ const LoginScreen = ({navigation}) => {
         navigation.navigate('Landing')
       }
       else {
-        Alert.alert(`${isAdmin ? "Admin" : "Employee"} not found`)
+        Alert.alert(`${isAdmin ? "Admin" : "Student"} not found`)
       }
     }
     catch(err){

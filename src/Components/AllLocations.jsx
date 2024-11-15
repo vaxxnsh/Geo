@@ -27,10 +27,10 @@ const Alllocation = ({navigation}) => {
 
   // Function to render each office item
   const renderOffice = ({ item: office }) => (
-    <TouchableOpacity onPress={() => navigation.navigate('EmployeeList', { office })}>
+    <TouchableOpacity onPress={() => navigation.navigate('Student List', { office })}>
       <View style={styles.card}>
-        <Text style={styles.cardTitle}>Office Name: {office.name}</Text>
-        <Text style={styles.cardText}>Office ID: {office._id}</Text>
+        <Text style={styles.cardTitle}>Hostel Name: {office.name}</Text>
+        <Text style={styles.cardText}>Hostel ID: {office._id}</Text>
         <Text style={styles.cardText}>Latitude: {office.latitude}</Text>
         <Text style={styles.cardText}>Longitude: {office.longitude}</Text>
       </View>
@@ -41,7 +41,7 @@ const Alllocation = ({navigation}) => {
     <View style={styles.container}>
       <Text style={styles.userId}>Hello, {user.admin.name}</Text>
       <TouchableOpacity style={styles.button}>
-        <Text style={styles.buttonText}onPress={() => navigation.navigate('CreateLocation')}>Create more Locations</Text>
+        <Text style={styles.buttonText}onPress={() => navigation.navigate('Create Hostel')}>Create more Locations</Text>
       </TouchableOpacity>
 
       <Text style={{
@@ -51,7 +51,7 @@ const Alllocation = ({navigation}) => {
         marginBottom: 16,
         color: '#333',
         textAlign: 'center',
-        }}>Here are your offices</Text>
+        }}>Here are your Hostels</Text>
 
       {/* Using FlatList to render the offices */}
       <FlatList

@@ -65,20 +65,20 @@ const LandingPage = ({ navigation }) => {
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView contentContainerStyle={styles.container}>
-        <Text style={styles.title}>AttendEase</Text>
+        <Text style={styles.title}>DormEase</Text>
         <Image 
           style={styles.bannerImage} 
           source={require('../../assets/geolocation-banner.png')} 
           resizeMode="stretch" 
         />
-        <Text style={styles.subtitle}>Streamline Employee Attendance Across Multiple Office Locations</Text>
+        <Text style={styles.subtitle}>Streamline Student Attendance Across Multiple Hostel Locations</Text>
         <Text style={styles.paragraph}>
           This app automates attendance tracking by leveraging geolocation to record check-in and check-out times within a 200-meter radius of office locations. Manual check-ins are available for offsite work, enhancing operational efficiency and accuracy.
         </Text>
         <Text style={styles.featureTitle}>Key Features:</Text>
         <Text style={styles.bulletPoint}>• Automatic Geolocation-Based Check-In/Check-Out</Text>
-        <Text style={styles.bulletPoint}>• Manual Check-In/Out for Offsite Work</Text>
-        <Text style={styles.bulletPoint}>• Total Work Hours Calculation</Text>
+        <Text style={styles.bulletPoint}>• Manual Check-In Case of Emergency</Text>
+        <Text style={styles.bulletPoint}>• Attendance Management</Text>
         <Text style={styles.bulletPoint}>• Real-Time Data Sync & Tamper-Proof Records</Text>
 
         {/* Logout Button */}
@@ -88,13 +88,25 @@ const LandingPage = ({ navigation }) => {
         >
           <Text style={styles.buttonText}>Logout</Text>
         </TouchableOpacity>
-
         <TouchableOpacity 
+          style={styles.button} 
+          onPress={() => navigation.navigate('Feedback')}
+        >
+          <Text style={styles.buttonText}>Feedbacks</Text>
+        </TouchableOpacity>
+        <TouchableOpacity 
+          style={styles.button} 
+          onPress={() => navigation.navigate('Customize')}
+        >
+          <Text style={styles.buttonText}>Customize Preferences</Text>
+        </TouchableOpacity>
+
+        {/* <TouchableOpacity 
           style={styles.linkButton} 
           onPress={() => navigation.navigate('VideoPage')}
         >
           <Text style={styles.linkText}>Watch Problem Statement Video</Text>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
       </ScrollView>
     </SafeAreaView>
   );
@@ -163,11 +175,31 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#555',
     marginBottom: 5,
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
     textAlign: 'left',
     alignSelf: 'flex-start',
   },
   button: {
     backgroundColor: '#6200EE',
+    width: 300,
+    alignItems : 'center',
+    textAlign : 'center',
     paddingVertical: 12,
     paddingHorizontal: 40,
     borderRadius: 5,

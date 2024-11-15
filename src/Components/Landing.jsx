@@ -12,6 +12,7 @@ const TabStack = createBottomTabNavigator()
 export default function Landing({ navigation }) {
 
   const user = useRecoilState(userState);
+  console.log(user,"In tab nav")
 
   if(!user)  navigation.navigate('Auth')
 
@@ -38,7 +39,7 @@ export default function Landing({ navigation }) {
             >
             <TabStack.Screen name='Home' component={TabHomeNew} options={{ headerShown: false }}/>
             <TabStack.Screen name='Live' component={Home} options={{ headerShown: false }}/>
-            {user.employee && <TabStack.Screen name='Attendance' component={EmployeeInfo} options={{ headerShown: false }} /> }
+            {user[0].employee && <TabStack.Screen name='Attendance' component={EmployeeInfo} options={{ headerShown: false }} /> }
         </TabStack.Navigator>
 
   )
